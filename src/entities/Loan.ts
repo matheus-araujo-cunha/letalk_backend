@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { Installment } from "./Installment";
 
 @Entity("loans")
 export class Loan {
@@ -19,4 +26,12 @@ export class Loan {
 
   @Column()
   valueByMonth: number;
+
+  @CreateDateColumn()
+  createdAt?: Date;
+
+  @OneToMany((type) => Installment, (installment) => installment.loan, {
+    eager: true,
+  })
+  installments: Installment[];
 }

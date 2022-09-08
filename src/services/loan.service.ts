@@ -26,15 +26,21 @@ class LoanService {
 
     let totalInterest = 0;
 
-    for (let index = 1; index <= monthsToPay; index++) {
-      const currentTotal = requestLoan.total;
-      let valueInstallment = requestLoan.valueByMonth;
+    for (let index = 1; index <= monthsToPay + 1; index++) {
+      const currentTotal = Number(requestLoan.total.toFixed(2));
 
-      if (currentTotal < valueInstallment) {
-        valueInstallment = currentTotal;
+      if (currentTotal < 0) {
+        continue;
       }
 
+      let valueInstallment = requestLoan.valueByMonth;
+
       const interest = calculateInterest(requestLoan.total, interestRate);
+
+      if (currentTotal < valueInstallment) {
+        valueInstallment = currentTotal + interest;
+      }
+
       totalInterest += interest;
       requestLoan.total += interest;
       const totalAdjusted = requestLoan.total;
@@ -53,18 +59,17 @@ class LoanService {
       };
 
       installmentsOfLoan.push(installment);
-
-      requestLoan.total -= monthsToPay;
+      requestLoan.total -= requestLoan.valueByMonth;
     }
 
     const installments = await installmentRepository.save(installmentsOfLoan);
 
     const result = {
-      loan,
+      ...loan,
       installments,
       monthsToPay,
       totalInterest,
-      interestRate,
+      interestRate: interestRate * 100,
     };
 
     return await retrieveLoanSchema.validate(result, { stripUnknown: true });

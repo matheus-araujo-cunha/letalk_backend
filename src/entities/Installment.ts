@@ -1,21 +1,21 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Loan } from "./Loan";
 
-Entity("installments");
+@Entity("installments")
 export class Installment {
   @PrimaryGeneratedColumn("uuid")
   id?: string;
 
-  @Column()
+  @Column({ type: "numeric" })
   payable: number;
 
-  @Column()
+  @Column({ type: "numeric" })
   interest: number;
 
-  @Column()
+  @Column({ type: "numeric" })
   payableAdjusted: number;
 
-  @Column()
+  @Column({ type: "numeric" })
   value: number;
 
   @Column()
